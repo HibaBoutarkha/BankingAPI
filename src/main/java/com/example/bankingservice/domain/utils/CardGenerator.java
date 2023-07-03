@@ -1,5 +1,7 @@
 package com.example.bankingservice.domain.utils;
 
+import com.example.bankingservice.domain.base.Card;
+import com.example.bankingservice.domain.base.PhysicalCard;
 import com.example.bankingservice.domain.base.VirtualCard;
 import org.springframework.stereotype.Service;
 
@@ -10,30 +12,41 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
-public class VirtualCardGenerator {
+public class CardGenerator {
 
     private static final String cardNumberRegex = "^5[1-5][0-9]{14}$";
     private static final String cvcRegex = "^[0-9]{3}$";
     private static final long EXPIRATION_TIME = 126200000L;
 
 
-    public static VirtualCard generateVirtualCard() {
-        VirtualCard virtualCard = new VirtualCard();
+    public static Card generateCard(String type) {
+        Card card ;
 
+        switch (type) {
+            case "physical": {
+                card = new PhysicalCard();
+                break;
+            }
+            case "virtual": {
+                card = new VirtualCard();
+                break;
+            }
+            default: return null;
+        }
         Date creationDate = new Date();
         Date expirationDate = calculateExpirationDate(creationDate, EXPIRATION_TIME);
 
-        virtualCard.setIsEnabled(true);
-        virtualCard.setCreationDate(creationDate);
-        virtualCard.setExpirationDate(expirationDate);
-        virtualCard.setCardNumber(generateCardNumber(cardNumberRegex));
-        virtualCard.setCvc(generateCVC(cvcRegex));
+        card.setIsEnabled(true);
+        card.setCreationDate(creationDate);
+        card.setExpirationDate(expirationDate);
+        card.setCardNumber(generateCardNumber());
+        card.setCvc(generateCVC());
 
 
-        return virtualCard;
+        return card;
     }
 
-    private static String generateCardNumber(String cardNumberRegex) {
+    private static String generateCardNumber() {
         Pattern pattern = Pattern.compile(cardNumberRegex);
         Random random = new Random();
         StringBuilder sb = new StringBuilder();
@@ -53,7 +66,7 @@ public class VirtualCardGenerator {
         }
     }
 
-    private static String generateCVC(String cvcRegex) {
+    private static String generateCVC() {
         Pattern pattern = Pattern.compile(cvcRegex);
         Random random = new Random();
         StringBuilder sb = new StringBuilder();

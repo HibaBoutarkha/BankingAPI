@@ -1,14 +1,18 @@
 package com.example.bankingservice.domain.business.apis;
 
 import com.example.bankingservice.configurations.JwtTokenUtil;
+import com.example.bankingservice.domain.base.Account;
+import com.example.bankingservice.domain.base.Address;
 import com.example.bankingservice.domain.base.AuthenticatedUser;
 import com.example.bankingservice.domain.base.Customer;
 import com.example.bankingservice.domain.business.usecases.Login;
 import com.example.bankingservice.domain.business.usecases.LoginRequest;
 import com.example.bankingservice.domain.business.usecases.SignUp;
 import com.example.bankingservice.domain.business.usecases.SignUpRequest;
+import com.example.bankingservice.domain.dtoRepos.AccountRepo;
 import com.example.bankingservice.domain.dtoRepos.AuthenticatedUserRepo;
 import com.example.bankingservice.domain.dtoRepos.CustomerRepo;
+import com.example.bankingservice.domain.utils.AccountGenerator;
 import com.example.bankingservice.domain.utils.CustomException;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +43,10 @@ public class AuthenticationAPI implements Login, SignUp {
     private final CustomerRepo customerRepo;
     private final AuthenticatedUserRepo authenticatedUserRepo;
     private final ModelMapper modelMapper;
+    private final AccountGenerator accountGenerator;
+    private final AccountRepo accountRepo;
     private HttpHeaders headers;
+
 
     @PostConstruct
     public void setHeaders() {
@@ -78,7 +85,11 @@ public class AuthenticationAPI implements Login, SignUp {
         try {
             this.saveUser(request.getPhoneNumber(), request.getPassword());
             Customer customer = modelMapper.map(request, Customer.class);
-            return ResponseEntity.status(HttpStatus.CREATED).headers(headers).body(customerRepo.save(customer));
+
+            customer = customerRepo.save(customer);
+            this.saveAccount(customer, request.getAgencyAddress());
+
+            return ResponseEntity.status(HttpStatus.CREATED).headers(headers).body(customer);
         } catch (CustomException e) {
             return ResponseEntity.status(e.getCode()).headers(headers).body("{\"message\":\"" + e.getMessage() + "\"}");
 
@@ -97,5 +108,14 @@ public class AuthenticationAPI implements Login, SignUp {
         authenticatedUser.setPhoneNumber(phoneNumber);
         authenticatedUser.setRole("customer");
         authenticatedUserRepo.save(authenticatedUser);
+    }
+
+    private void saveAccount(Customer customer, Address agencyAddress){
+        Account account = accountGenerator.generateAccount();
+
+        account.setOwner(customer);
+        account.setAgencyAddress(agencyAddress);
+
+        accountRepo.save(account);
     }
 }

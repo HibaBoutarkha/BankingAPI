@@ -19,5 +19,6 @@ public class SignUpRequest {
     private String email;
     private Date birthdate;
     private Address birthAddress;
+    private Address agencyAddress;
 
 }

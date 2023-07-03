@@ -7,10 +7,10 @@ import com.example.bankingservice.domain.business.usecases.GenerateVirtualCard;
 import com.example.bankingservice.domain.business.usecases.GenerateVirtualCardRequest;
 import com.example.bankingservice.domain.business.usecases.UpdateCardStatus;
 import com.example.bankingservice.domain.business.usecases.UpdateCardStatusRequest;
-import com.example.bankingservice.domain.dtoRepos.AccountInfoRepo;
+import com.example.bankingservice.domain.dtoRepos.AccountRepo;
 import com.example.bankingservice.domain.utils.CardFactory;
 import com.example.bankingservice.domain.utils.CustomException;
-import com.example.bankingservice.domain.utils.VirtualCardGenerator;
+import com.example.bankingservice.domain.utils.CardGenerator;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -26,7 +26,7 @@ import java.util.List;
 @AllArgsConstructor
 public class CardAPI implements UpdateCardStatus, GenerateVirtualCard {
 
-    private AccountInfoRepo accountInfoRepo;
+    private AccountRepo accountInfoRepo;
 
     @Override
     @PostMapping("/update-status")
@@ -45,7 +45,7 @@ public class CardAPI implements UpdateCardStatus, GenerateVirtualCard {
         int tries = 0;
         while (tries < 3) {
             tries++;
-            VirtualCard virtualCard = VirtualCardGenerator.generateVirtualCard();
+            VirtualCard virtualCard = (VirtualCard) CardGenerator.generateCard("virtual");
             List<VirtualCard> virtualCardList = account.getVirtualCardList();
             virtualCardList.add(virtualCard);
             try {

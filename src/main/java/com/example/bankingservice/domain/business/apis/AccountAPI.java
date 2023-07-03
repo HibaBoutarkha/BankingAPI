@@ -3,7 +3,7 @@ package com.example.bankingservice.domain.business.apis;
 import com.example.bankingservice.domain.base.Account;
 import com.example.bankingservice.domain.business.usecases.GetAccount;
 import com.example.bankingservice.domain.business.usecases.GetAccountInfoRequest;
-import com.example.bankingservice.domain.dtoRepos.AccountInfoRepo;
+import com.example.bankingservice.domain.dtoRepos.AccountRepo;
 import com.example.bankingservice.domain.utils.CustomException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,7 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 public class AccountAPI implements GetAccount {
 
-    private AccountInfoRepo accountInfoRepo;
+    private AccountRepo accountInfoRepo;
 
     @Override
     @GetMapping("/accounts-info")

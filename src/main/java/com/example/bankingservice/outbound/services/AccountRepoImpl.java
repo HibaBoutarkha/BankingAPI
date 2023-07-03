@@ -3,7 +3,7 @@ package com.example.bankingservice.outbound.services;
 import com.example.bankingservice.configurations.CustomModelMapper;
 import com.example.bankingservice.domain.base.Account;
 import com.example.bankingservice.domain.base.PhysicalCard;
-import com.example.bankingservice.domain.dtoRepos.AccountInfoRepo;
+import com.example.bankingservice.domain.dtoRepos.AccountRepo;
 import com.example.bankingservice.domain.dtoRepos.PhysicalCardRepo;
 import com.example.bankingservice.domain.utils.CustomException;
 import com.example.bankingservice.outbound.jpa.accounts.AccountEntity;
@@ -19,7 +19,7 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class AccountRepoImpl implements AccountInfoRepo, PhysicalCardRepo {
+public class AccountRepoImpl implements AccountRepo, PhysicalCardRepo {
 
     private AccountEntityRepo accountEntityRepo;
     private CustomModelMapper mapper;
